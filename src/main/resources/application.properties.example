@@ -1,0 +1,9 @@
+spring.application.name=Academic Workload Service
+
+minio.url=http://minio:9000
+minio.access.name=secret
+minio.access.secret=secret
+minio.bucket.name=academic-workload
+
+springdoc.swagger-ui.path=/
+springdoc.swagger-ui.enabled=true
