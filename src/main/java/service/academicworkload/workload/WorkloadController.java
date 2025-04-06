@@ -20,7 +20,7 @@ public class WorkloadController {
     }
 
     @PatchMapping("/api/v1/workload/update")
-    public WorkloadResponse workloadParsing() {
+    public Workload workloadParsing() {
 
         InputStream file = storageService.getWorkloadInputStream();
 
@@ -31,14 +31,14 @@ public class WorkloadController {
             ArrayList<String> lists = excelProcess.getWorkbookLists();
 
             if (!lists.isEmpty()) {
-                return new WorkloadResponse("200", lists.toString());
+                return new Workload("200", lists.toString());
             }
             else
-                return new WorkloadResponse("404", "File is empty");
+                return new Workload("404", "File is empty");
 
         }
 
-        return new WorkloadResponse("404", "Loaded file does not exit!");
+        return new Workload("404", "Loaded file does not exit!");
     }
 
 }
