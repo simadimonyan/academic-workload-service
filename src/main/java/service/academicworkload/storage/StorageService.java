@@ -1,10 +1,9 @@
-package service.academicworkload.service;
+package service.academicworkload.storage;
 
 import io.minio.*;
 import io.minio.messages.Item;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import service.academicworkload.configuration.MinioConfig;
 
 import java.io.InputStream;
 
@@ -12,32 +11,32 @@ import java.io.InputStream;
 public class StorageService {
 
     private final MinioClient minioClient;
-    private final MinioConfig minioConfig;
+    private final StorageConfiguration storageConfiguration;
 
     @Autowired
-    public StorageService(MinioClient minioClient, MinioConfig minioConfig) {
+    public StorageService(MinioClient minioClient, StorageConfiguration storageConfiguration) {
         this.minioClient = minioClient;
-        this.minioConfig = minioConfig;
+        this.storageConfiguration = storageConfiguration;
     }
 
     public InputStream getWorkloadInputStream() {
 
         try {
-            boolean bucket = minioClient.bucketExists(BucketExistsArgs.builder().bucket(minioConfig.bucket).build());
+            boolean bucket = minioClient.bucketExists(BucketExistsArgs.builder().bucket(storageConfiguration.bucket).build());
 
             if (bucket) {
 
                 // get last item record
                 Iterable<Result<Item>> results =
                         minioClient.listObjects(ListObjectsArgs.builder()
-                                .bucket(minioConfig.bucket).maxKeys(1).build());
+                                .bucket(storageConfiguration.bucket).maxKeys(1).build());
 
                 // record
                 Item object = results.iterator().next().get();
 
                 // getting and returning object stream
                 return minioClient.getObject(GetObjectArgs.builder()
-                        .bucket(minioConfig.bucket).object(object.objectName()).build());
+                        .bucket(storageConfiguration.bucket).object(object.objectName()).build());
             }
 
         } catch (Exception e) {

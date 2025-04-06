@@ -1,11 +1,10 @@
-package service.academicworkload.controller;
+package service.academicworkload.workload;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RestController;
-import service.academicworkload.controller.dto.Response;
-import service.academicworkload.domain.ExcelProcess;
-import service.academicworkload.service.StorageService;
+import service.academicworkload.excel.ExcelProcess;
+import service.academicworkload.storage.StorageService;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ public class WorkloadController {
     }
 
     @PatchMapping("/api/v1/workload/update")
-    public Response workloadParsing() {
+    public WorkloadResponse workloadParsing() {
 
         InputStream file = storageService.getWorkloadInputStream();
 
@@ -32,14 +31,14 @@ public class WorkloadController {
             ArrayList<String> lists = excelProcess.getWorkbookLists();
 
             if (!lists.isEmpty()) {
-                return new Response("200", lists.toString());
+                return new WorkloadResponse("200", lists.toString());
             }
             else
-                return new Response("404", "File is empty");
+                return new WorkloadResponse("404", "File is empty");
 
         }
 
-        return new Response("404", "Loaded file does not exit!");
+        return new WorkloadResponse("404", "Loaded file does not exit!");
     }
 
 }

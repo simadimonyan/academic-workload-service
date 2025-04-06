@@ -1,4 +1,4 @@
-package service.academicworkload.domain;
+package service.academicworkload.excel;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
