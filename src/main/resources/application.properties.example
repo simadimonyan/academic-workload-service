@@ -1,5 +1,14 @@
 spring.application.name=Academic Workload Service
 
+spring.datasource.url=jdbc:postgresql://academic_workload_service_db:5432/academic-workload
+spring.datasource.username=secret
+spring.datasource.password=secret
+
+spring.jpa.hibernate.ddl-auto=update
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.jpa.database=postgresql
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+
 minio.url=http://minio:9000
 minio.access.name=secret
 minio.access.secret=secret
