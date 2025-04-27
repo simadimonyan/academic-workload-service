@@ -1,10 +1,11 @@
-package service.academicworkload.workload;
+package service.academicworkload.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RestController;
-import service.academicworkload.excel.ExcelProcess;
-import service.academicworkload.storage.StorageService;
+import service.academicworkload.service.excel.ExcelProcess;
+import service.academicworkload.service.storage.StorageService;
+import service.academicworkload.repository.model.network.Workload;
 
 import java.io.InputStream;
 import java.util.ArrayList;

@@ -1,9 +1,10 @@
-package service.academicworkload.storage;
+package service.academicworkload.service.storage;
 
 import io.minio.*;
 import io.minio.messages.Item;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import service.academicworkload.service.configuration.StorageConfiguration;
 
 import java.io.InputStream;
 
