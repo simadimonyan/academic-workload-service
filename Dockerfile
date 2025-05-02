@@ -14,7 +14,7 @@ ENV GRADLE_HOME=/opt/gradle
 ENV PATH=$GRADLE_HOME/bin:$PATH
 
 COPY . /service
-WORKDIR /service/Academic Load Service
+WORKDIR /service/Academic Workload Service
 
 # Запуск сборки и запускаем Spring Boot приложение
 CMD gradle bootRun

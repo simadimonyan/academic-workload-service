@@ -45,12 +45,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'org.postgresql:postgresql'
 
+    // jackson (csv)
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.13.0")
+
     // s3
     implementation("io.minio:minio:8.5.17")
-
-    // excel file support
-    implementation("org.apache.poi:poi:5.2.5")
-    implementation("org.apache.poi:poi-ooxml:5.2.5")
 
     // swagger docs
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
