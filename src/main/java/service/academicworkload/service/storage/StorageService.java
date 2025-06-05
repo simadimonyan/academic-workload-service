@@ -4,11 +4,10 @@ import io.minio.*;
 import io.minio.messages.Item;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import service.academicworkload.repository.model.network.reponse.CsvResponse;
-import service.academicworkload.service.csv.CsvParseFactory;
-import service.academicworkload.service.csv.CsvParseService;
-import service.academicworkload.service.csv.model.parent.CsvModel;
-import service.academicworkload.service.csv.state.CsvContentType;
+import service.academicworkload.service.configuration.CsvServiceConfiguration;
+import service.academicworkload.service.csv.model.CsvDepartment;
+import service.academicworkload.service.csv.model.CsvGroup;
+import service.academicworkload.service.csv.model.CsvWorkload;
 import service.academicworkload.service.storage.state.BucketType;
 
 import java.io.InputStream;
@@ -18,10 +17,13 @@ import java.util.ArrayList;
 public class StorageService {
 
     private final MinioClient minioClient;
+    private final CsvServiceConfiguration configuration;
+
 
     @Autowired
-    public StorageService(MinioClient minioClient) {
+    public StorageService(MinioClient minioClient, CsvServiceConfiguration configuration) {
         this.minioClient = minioClient;
+        this.configuration = configuration;
     }
 
     private void createBucketIfNotExists(String bucketName) {
@@ -53,29 +55,39 @@ public class StorageService {
         }
     }
 
-    public <T extends CsvModel> CsvResponse parseFile(InputStream file, CsvContentType<T> type) {
+    public ArrayList<CsvWorkload> parseWorkloadFile() {
+        InputStream file = getWorkload();
         if (file != null) {
-            CsvParseService<T> service = CsvParseFactory.create(type);
-            ArrayList<T> list = (ArrayList<T>) service.parse(file);
-
-            if (!list.isEmpty()) {
-                return new CsvResponse("200", list.get(1).toString());
-            } else {
-                return new CsvResponse("404", "File is empty");
-            }
+            return (ArrayList<CsvWorkload>) configuration.workloadParser().parse(file);
         }
-        return new CsvResponse("404", "Loaded file does not exit!");
+        return new ArrayList<>();
     }
 
-    public InputStream getWorkload() {
+    public ArrayList<CsvGroup> parseGroupFile() {
+        InputStream file = getGroups();
+        if (file != null) {
+            return (ArrayList<CsvGroup>) configuration.groupParser().parse(file);
+        }
+        return new ArrayList<>();
+    }
+
+    public ArrayList<CsvDepartment> parseDepartmentFile() {
+        InputStream file = getDepartments();
+        if (file != null) {
+            return (ArrayList<CsvDepartment>) configuration.departmentParser().parse(file);
+        }
+        return new ArrayList<>();
+    }
+
+    private InputStream getWorkload() {
         return getInputStreamByBucket(BucketType.WORKLOAD.getBucketName());
     }
 
-    public InputStream getGroups() {
+    private InputStream getGroups() {
         return getInputStreamByBucket(BucketType.GROUP.getBucketName());
     }
 
-    public InputStream getDepartments() {
+    private InputStream getDepartments() {
         return getInputStreamByBucket(BucketType.DEPARTMENT.getBucketName());
     }
 

@@ -2,7 +2,7 @@ package service.academicworkload.repository.model.database.group;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import service.academicworkload.repository.model.database.AcademicWorkload;
+import service.academicworkload.repository.model.database.workload.AcademicWorkload;
 
 import java.util.List;
 
@@ -29,17 +29,29 @@ public class Group {
     private Faculty faculty;
 
     // связь с графиком обучения (FK)
-    @ManyToOne
-    @JoinColumn(name = "theory_id")
-    private TheoryPeriod study;
+    @ManyToMany
+    @JoinTable(
+        name = "group_theory_period",
+        joinColumns = @JoinColumn(name = "group_id"),
+        inverseJoinColumns = @JoinColumn(name = "theory_id")
+    )
+    private List<TheoryPeriod> study;
 
     // название группы
     @Column(name = "name")
     private String name;
 
+    // уровень образования (СПО, Бакалавриат, Магистратура)
+    @Column(name = "level")
+    private String level;
+
     // курс группы
     @Column(name = "course")
     private Integer course;
+
+    // форма обучения
+    @Column(name = "study_form")
+    private String studyForm;
 
     // количество студентов
     @Column(name = "capacity")

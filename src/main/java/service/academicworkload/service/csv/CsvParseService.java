@@ -6,7 +6,6 @@ import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import service.academicworkload.service.csv.model.parent.CsvModel;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -14,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CsvParseService<T extends CsvModel> {
+public class CsvParseService<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(CsvParseService.class);
 

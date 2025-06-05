@@ -2,7 +2,7 @@ package service.academicworkload.repository.model.database.teacher;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import service.academicworkload.repository.model.database.AcademicWorkload;
+import service.academicworkload.repository.model.database.workload.AcademicWorkload;
 import service.academicworkload.repository.model.database.auditory.Auditory;
 
 import java.util.List;
@@ -31,6 +31,10 @@ public class Teacher {
     // список закрепленных аудиторий
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
     private List<Auditory> auditories;
+
+    // короткая запись
+    @Column(name = "label")
+    private String label;
 
     // имя преподавателя
     @Column(name = "name")

@@ -2,7 +2,7 @@ package service.academicworkload.repository.model.database.group;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import service.academicworkload.repository.model.database.AcademicWorkload;
+import service.academicworkload.repository.model.database.workload.AcademicWorkload;
 
 import java.util.List;
 

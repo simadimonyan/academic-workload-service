@@ -3,13 +3,10 @@ package service.academicworkload.service.csv.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import service.academicworkload.service.csv.model.parent.CsvModel;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Workload extends CsvModel {
+public class CsvWorkload {
 
     @JsonProperty("Группа")
     private String group;

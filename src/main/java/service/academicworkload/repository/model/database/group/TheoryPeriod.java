@@ -20,12 +20,8 @@ public class TheoryPeriod {
     private Long id;
 
     // группы по графику
-    @OneToMany(mappedBy = "study",  cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "study")
     private List<Group> groups;
-
-    // форма обучения
-    @Column(name = "study_form")
-    private String studyForm;
 
     // timestamp начала теоретического обучения
     @Column(name = "theory_start")
