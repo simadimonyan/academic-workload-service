@@ -12,6 +12,7 @@ import service.academicworkload.repository.dao.group.GroupRepository;
 import service.academicworkload.repository.dao.group.TheoryPeriodRepository;
 import service.academicworkload.repository.dao.subject.SubjectRepository;
 import service.academicworkload.repository.dao.teacher.TeacherRepository;
+import service.academicworkload.repository.dao.workspace.WorkspaceRepository;
 import service.academicworkload.repository.model.database.workload.AcademicWorkload;
 import service.academicworkload.repository.model.database.group.Department;
 import service.academicworkload.repository.model.database.group.Faculty;
@@ -19,6 +20,7 @@ import service.academicworkload.repository.model.database.group.Group;
 import service.academicworkload.repository.model.database.group.TheoryPeriod;
 import service.academicworkload.repository.model.database.subject.Subject;
 import service.academicworkload.repository.model.database.teacher.Teacher;
+import service.academicworkload.repository.model.database.workspace.Workspace;
 import service.academicworkload.service.csv.model.CsvWorkload;
 import service.academicworkload.service.csv.model.CsvDepartment;
 import service.academicworkload.service.csv.model.CsvGroup;
@@ -38,6 +40,8 @@ public class WorkloadFactoryService {
     private final GroupRepository groupRepository;
     private final AcademicWorkloadRepository academicWorkloadRepository;
 
+    private final WorkspaceRepository workspaceRepository;
+
     private static final Logger logger = LoggerFactory.getLogger(WorkloadFactoryService.class);
 
     @Autowired
@@ -48,7 +52,8 @@ public class WorkloadFactoryService {
         FacultyRepository facultyRepository,
         TheoryPeriodRepository theoryPeriodRepository,
         GroupRepository groupRepository,
-        AcademicWorkloadRepository academicWorkloadRepository
+        AcademicWorkloadRepository academicWorkloadRepository,
+        WorkspaceRepository workspaceRepository
     ) {
         this.subjectRepository = subjectRepository;
         this.teacherRepository = teacherRepository;
@@ -57,14 +62,26 @@ public class WorkloadFactoryService {
         this.theoryPeriodRepository = theoryPeriodRepository;
         this.groupRepository = groupRepository;
         this.academicWorkloadRepository = academicWorkloadRepository;
+        this.workspaceRepository = workspaceRepository;
     }
 
     @Transactional
     public void process(
+        String workspaceName,
         ArrayList<CsvWorkload> csvWorkloads,
         ArrayList<CsvGroup> csvGroups,
         ArrayList<CsvDepartment> csvDepartments
     ) throws NoSuchFieldException, IllegalAccessException {
+
+        // перезапись рабочего пространства
+        Workspace workspace = workspaceRepository.findByName(workspaceName).orElseGet(() -> {
+            Workspace entity = new Workspace();
+            entity.setName(workspaceName);
+            entity.setCreatedAt(String.valueOf(System.currentTimeMillis()));
+            entity.setIsActive(workspaceRepository.count() == 0);
+            entity.setIsDeleted(false);
+            return workspaceRepository.save(entity);
+        });
 
         int index = 0;
         for (CsvWorkload csvWorkload : csvWorkloads) {
@@ -105,6 +122,7 @@ public class WorkloadFactoryService {
                     // если в базе не существует
                     TheoryPeriod theoryPeriod = theoryPeriodRepository.findByTheoryStartAndTheoryEnd(start, end).orElseGet(() -> {
                         TheoryPeriod savable = new TheoryPeriod();
+                        savable.setWorkspace(workspace);
                         savable.setTheoryStart(start);
                         savable.setTheoryEnd(end);
                         return theoryPeriodRepository.save(savable);
@@ -117,6 +135,7 @@ public class WorkloadFactoryService {
             logger.debug("Поиск или создание факультета: {}", csvGroup.getFaculty());
             Faculty faculty = facultyRepository.findAllByName(csvGroup.getFaculty()).orElseGet(() -> {
                 Faculty savable = new Faculty();
+                savable.setWorkspace(workspace);
                 savable.setName(csvGroup.getFaculty());
                 return  facultyRepository.save(savable);
             });
@@ -134,6 +153,7 @@ public class WorkloadFactoryService {
             logger.debug("Поиск или создание группы: {}", csvGroup.getGroup());
             Group group = groupRepository.findAllByName(csvGroup.getGroup()).orElseGet(() -> {
                 Group savable = new Group();
+                savable.setWorkspace(workspace);
                 savable.setFaculty(faculty); // связь
                 savable.setName(csvGroup.getGroup());
                 savable.setCapacity(csvGroup.getCapacity());
@@ -151,6 +171,7 @@ public class WorkloadFactoryService {
             logger.debug("Поиск или создание кафедры: {}", csvDepartment.getName());
             Department department = departmentRepository.findAllByName(csvDepartment.getName()).orElseGet(() -> {
                 Department savable = new Department();
+                savable.setWorkspace(workspace);
                 savable.setName(csvDepartment.getName());
                 return departmentRepository.save(savable);
             });
@@ -166,6 +187,7 @@ public class WorkloadFactoryService {
             logger.debug("Поиск или создание предмета: {} ({})", csvWorkload.getSubject(), csvWorkload.getSubjectType());
             Subject subject = subjectRepository.findAllByNameAndSubjectType(csvWorkload.getSubject(), csvWorkload.getSubjectType()).orElseGet(() -> {
                 Subject savable = new Subject();
+                savable.setWorkspace(workspace);
                 savable.setName(csvWorkload.getSubject());
                 savable.setSubjectType(csvWorkload.getSubjectType());
                 return subjectRepository.save(savable);
@@ -181,6 +203,7 @@ public class WorkloadFactoryService {
             if (!csvWorkload.getTeacher().contains("И?.")) { // если преподаватель закреплен по нагрузке
                  teacher = teacherRepository.findAllByLabel(csvWorkload.getTeacher()).orElseGet(() -> {
                     Teacher savable = new Teacher();
+                     savable.setWorkspace(workspace);
                     savable.setLabel(csvWorkload.getTeacher());
                     savable.setStatus(csvWorkload.getTeacherStatus());
                     return teacherRepository.save(savable);
@@ -190,6 +213,7 @@ public class WorkloadFactoryService {
             // -- нагрузка --
             logger.debug("Создание академической нагрузки");
             AcademicWorkload academicWorkload = new AcademicWorkload();
+            academicWorkload.setWorkspace(workspace);
             academicWorkload.setDepartment(department);
             academicWorkload.setGroup(group);
             academicWorkload.setHours(csvWorkload.getHours());
@@ -220,6 +244,9 @@ public class WorkloadFactoryService {
             subjectRepository.save(subject);
             if (teacher != null) teacherRepository.save(teacher);
             academicWorkloadRepository.save(academicWorkload);
+
+            workspace.setUpdatedAt(String.valueOf(System.currentTimeMillis()));
+            workspaceRepository.save(workspace);
 
         }
 

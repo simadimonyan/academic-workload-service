@@ -6,6 +6,7 @@ import service.academicworkload.repository.model.database.group.Department;
 import service.academicworkload.repository.model.database.group.Group;
 import service.academicworkload.repository.model.database.subject.Subject;
 import service.academicworkload.repository.model.database.teacher.Teacher;
+import service.academicworkload.repository.model.database.workspace.Workspace;
 
 import java.util.List;
 
@@ -21,6 +22,11 @@ public class AcademicWorkload {
     @Column(name = "workload_id")
     @GeneratedValue
     private Long id;
+
+    // связь с рабочим пространством
+    @ManyToOne
+    @JoinColumn(name = "workspace_id")
+    private Workspace workspace;
 
     @OneToMany(mappedBy = "workload", cascade = CascadeType.ALL)
     private List<WorkloadSplit> split;

@@ -1,8 +1,8 @@
-package service.academicworkload.controller;
+package service.academicworkload.controller.parser;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import service.academicworkload.repository.model.network.request.WorkspaceRequest;
 import service.academicworkload.repository.model.network.response.CsvResponse;
 import service.academicworkload.service.csv.model.CsvDepartment;
 import service.academicworkload.service.csv.model.CsvGroup;
@@ -25,14 +25,15 @@ public class CsvController {
     }
 
     @PostMapping("/api/v1/csv/parse")
-    public CsvResponse workloadParsing() {
+    public CsvResponse workloadParsing(@RequestBody WorkspaceRequest request) {
+
         ArrayList<CsvWorkload> workloads = storageService.parseWorkloadFile();
         ArrayList<CsvDepartment> departments = storageService.parseDepartmentFile();
         ArrayList<CsvGroup> groups = storageService.parseGroupFile();
 
         if (workloads != null && departments != null && groups != null) {
             try {
-                workloadFactory.process(workloads, groups, departments);
+                workloadFactory.process(request.name(), workloads, groups, departments);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 return new CsvResponse("500", "Unknown error", e.getMessage());
             }

@@ -3,6 +3,7 @@ package service.academicworkload.repository.model.database.auditory;
 import jakarta.persistence.*;
 import lombok.Data;
 import service.academicworkload.repository.model.database.teacher.Teacher;
+import service.academicworkload.repository.model.database.workspace.Workspace;
 
 import java.util.List;
 
@@ -18,6 +19,11 @@ public class Auditory {
     @Column(name = "auditory_id")
     @GeneratedValue
     private Long id;
+
+    // связь с рабочим пространством
+    @ManyToOne
+    @JoinColumn(name = "workspace_id")
+    private Workspace workspace;
 
     // оснащенность аудитории
     @OneToMany(mappedBy = "auditory", cascade = CascadeType.ALL)

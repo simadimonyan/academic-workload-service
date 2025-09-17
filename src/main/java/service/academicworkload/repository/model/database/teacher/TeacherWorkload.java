@@ -2,6 +2,7 @@ package service.academicworkload.repository.model.database.teacher;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import service.academicworkload.repository.model.database.workspace.Workspace;
 
 /**
  * Таблица рабочего графика преподавателя
@@ -15,6 +16,11 @@ public class TeacherWorkload {
     @Column(name = "workload_id")
     @GeneratedValue
     private Long id;
+
+    // связь с рабочим пространством
+    @ManyToOne
+    @JoinColumn(name = "workspace_id")
+    private Workspace workspace;
 
     // связь с преподавателем (FK)
     @ManyToOne

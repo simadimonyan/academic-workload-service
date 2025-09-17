@@ -2,6 +2,7 @@ package service.academicworkload.repository.model.database.workload;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import service.academicworkload.repository.model.database.workspace.Workspace;
 
 /**
  * Таблица, хранящая распределение
@@ -15,6 +16,11 @@ public class WorkloadSplit {
     @Id
     @GeneratedValue
     private Long id;
+
+    // связь с рабочим пространством
+    @ManyToOne
+    @JoinColumn(name = "workspace_id")
+    private Workspace workspace;
 
     // связь с нагрузкой
     @ManyToOne

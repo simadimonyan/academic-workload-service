@@ -3,6 +3,7 @@ package service.academicworkload.repository.model.database.subject;
 import jakarta.persistence.*;
 import lombok.Data;
 import service.academicworkload.repository.model.database.workload.AcademicWorkload;
+import service.academicworkload.repository.model.database.workspace.Workspace;
 
 import java.util.List;
 
@@ -19,6 +20,11 @@ public class Subject {
     @Column(name = "subject_id")
     @GeneratedValue
     private Long id;
+
+    // связь с рабочим пространством
+    @ManyToOne
+    @JoinColumn(name = "workspace_id")
+    private Workspace workspace;
 
     // учебная нагрузка на дисциплину по группам
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL)

@@ -2,6 +2,7 @@ package service.academicworkload.repository.model.database.subject;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import service.academicworkload.repository.model.database.workspace.Workspace;
 
 /**
  * Таблица требований к оснащению
@@ -16,6 +17,11 @@ public class SubjectRequirements {
     @Column(name = "requirement_id")
     @GeneratedValue
     private Long id;
+
+    // связь с рабочим пространством
+    @ManyToOne
+    @JoinColumn(name = "workspace_id")
+    private Workspace workspace;
 
     // связь с предметом (FK)
     @ManyToOne

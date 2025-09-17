@@ -2,6 +2,7 @@ package service.academicworkload.repository.model.database.auditory;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import service.academicworkload.repository.model.database.workspace.Workspace;
 
 /**
  * Таблица оснащения аудиторий
@@ -15,6 +16,11 @@ public class AuditoryEquipment {
     @Column(name = "equipment_id")
     @GeneratedValue
     private Long id;
+
+    // связь с рабочим пространством
+    @ManyToOne
+    @JoinColumn(name = "workspace_id")
+    private Workspace workspace;
 
     // связка с аудиторией (FK)
     @ManyToOne
