@@ -1,5 +1,6 @@
 package service.academicworkload.controller.parser;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import service.academicworkload.repository.model.network.request.WorkspaceRequest;
@@ -12,6 +13,7 @@ import service.academicworkload.service.storage.StorageService;
 
 import java.util.ArrayList;
 
+@Slf4j
 @RestController
 public class CsvController {
 
@@ -26,6 +28,7 @@ public class CsvController {
 
     @PostMapping("/api/v1/csv/parse")
     public CsvResponse workloadParsing(@RequestBody WorkspaceRequest request) {
+        log.info("POST Запрос: /api/v1/csv/parse \n Body:\n {}", request);
 
         ArrayList<CsvWorkload> workloads = storageService.parseWorkloadFile();
         ArrayList<CsvDepartment> departments = storageService.parseDepartmentFile();
